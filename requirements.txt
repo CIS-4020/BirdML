@@ -1,0 +1,7 @@
+tensorflow>=2.12
+numpy
+Pandas
+Matplotlib
+Scikit-learn
+Opencv-python
+PyYAML

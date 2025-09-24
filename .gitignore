@@ -1,0 +1,50 @@
+# -------------------------
+# Python bytecode & cache
+# -------------------------
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# -------------------------
+# Virtual environment
+# -------------------------
+venv/
+.env/
+.venv/
+
+# -------------------------
+# Jupyter & notebooks
+# -------------------------
+
+# -------------------------
+# Model weights & checkpoints
+# -------------------------
+models/*.h5
+models/*.pt
+models/*.pth
+models/*.ckpt
+models/*.onnx
+
+# If you're using Git LFS, you can remove these exclusions ↑ and track models with LFS instead.
+
+# -------------------------
+# Data (raw or processed)
+# -------------------------
+raw_data/*
+
+# -------------------------
+# Logs & results
+# -------------------------
+
+# -------------------------
+# System / IDE files
+# -------------------------
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# -------------------------
+# Temporary / build files
+# ------------

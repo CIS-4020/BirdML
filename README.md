@@ -5,7 +5,8 @@ Make sure you have Python and pip.
 
 1. Install venv.
 
-    Line: ```sudo apt install python3.10-venv```
+    Line (Windows): ```sudo apt install python3.10-venv```
+    Line (MacOS): ```brew install python3.10```
 
 2. Create your own envoirnment folder. Dependencies will go here.
 

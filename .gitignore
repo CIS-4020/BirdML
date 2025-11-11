@@ -18,6 +18,14 @@ venv/
 # -------------------------
 
 # -------------------------
+# Data (raw or processed)
+# -------------------------
+raw_data/*
+processed_data/*
+!processed_data/.gitkeep
+!raw_data/.gitkeep
+
+# -------------------------
 # Model weights & checkpoints
 # -------------------------
 models/*.h5

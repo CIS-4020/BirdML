@@ -39,6 +39,9 @@ with open("../raw_data/classes.txt", "r") as rawClassFile:
 
                 img = cv2.imread(f"{rawImgPath}/{folderName}/{imgFile}")
 
+                if img is None:
+                    continue
+
                 baseHeight, baseWidth, baseChannels = img.shape
 
                 if baseWidth > baseHeight:

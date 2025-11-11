@@ -5,8 +5,6 @@ import shutil
 firstClass = 295
 boxDimension = 224
 
-
-                
 rawImgPath = "../raw_data/images"
 newImgPath = "../processed_data/images"
 if not os.path.exists(f"{newImgPath}"): os.mkdir(f"{newImgPath}")
@@ -27,14 +25,12 @@ with open("../raw_data/classes.txt", "r") as rawClassFile:
 
             if not os.path.exists(f"{rawImgPath}/{folderName}"):
                 continue
-            # newFolder = str(int(folder)-int(firstClass))
 
             if os.path.exists(f"{newImgPath}/{nextClass}"):
                 shutil.rmtree(f"{newImgPath}/{nextClass}")
             
             os.mkdir(f"{newImgPath}/{nextClass}")
 
-            # print(lines)
             classNum, className = lines[int(folderName)].split(" ", maxsplit=1)
             newClassFile.write(str(nextClass) + " " + className + "\n")
             newClassFile.flush()

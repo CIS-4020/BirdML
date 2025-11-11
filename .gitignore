@@ -30,7 +30,7 @@ processed_data/*
 # -------------------------
 models/*.h5
 models/*.pt
-models/*.pth
+*.pth
 models/*.ckpt
 models/*.onnx
 

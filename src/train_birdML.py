@@ -66,7 +66,7 @@ def trainModel(numFolders=-1):
 	torch.save(model.state_dict(), "models/bird_resnet50.pth")
 
 if __name__ == "__main__":
-	if sys.argv[1]:
+	if len(sys.argv) > 1:
 		trainModel(int(sys.argv[1]))
 	else:
 		trainModel()

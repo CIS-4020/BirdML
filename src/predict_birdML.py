@@ -1,3 +1,4 @@
+import sys, os
 import torch
 from torchvision import models
 from torchvision import transforms
@@ -11,7 +12,7 @@ def predict(modelName, image):
     num_classes = 3   # (whatever your actual number of bird species was)
     model.fc = torch.nn.Linear(model.fc.in_features, num_classes)
 
-    model.load_state_dict(torch.load(f"models/{model}", map_location=torch.device("cpu")))
+    model.load_state_dict(torch.load(f"./models/{modelName}", map_location=torch.device("cpu")))
     model.eval()  # set to evaluation mode
 
     from torchvision import transforms
@@ -44,17 +45,21 @@ def predict(modelName, image):
 
 def convertClassNumToClassName(classNum):
 
-    with open("../processed_data/classes.txt", "r") as classFile:
+    with open("./processed_data/classes.txt", "r") as classFile:
 
-        lines = classFile.split("\n")
+        for line in classFile:
 
-        for line in lines:
+            splitLine = line.split(" ")
 
-            splitLine = line.split(" ")[0]
+            _classNum = splitLine[0]
 
-            if int(splitLine[0]) == classNum:
-                return splitLine[1:]
+            if int(_classNum) == int(classNum):
+                return " ".join(splitLine[1:])
             
     return "Could not determine class name."
 
-    
+if __name__ == "__main__":
+    image_path = int(sys.argv[1])
+    image_path = "./processed_data/test_images/common_eider_0.png"
+    image = Image.open(image_path).convert("RGB")
+    predict("bird_resnet50.pth", image)

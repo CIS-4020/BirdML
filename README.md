@@ -22,3 +22,8 @@ Make sure you have Python and pip.
     Line: ```pip install -r requirements.txt```
 
 Done.
+
+## Running
+
+cd BirdML-frontend
+npm run dev

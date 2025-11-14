@@ -4,7 +4,7 @@ from torchvision import models
 from torchvision import transforms
 from PIL import Image
 #Ex. model = "bird_resnet50.pth" (searches in our models folder)
-def predict(modelName, image):
+def predict(modelName, image, imageName):
     # Recreate the same model architecture
     model = models.resnet50(weights=None)
 
@@ -39,7 +39,7 @@ def predict(modelName, image):
         _, predicted = outputs.max(1)
         predicted_class = predicted.item()
 
-    print(f"Prediction Results: {predicted_class}, {convertClassNumToClassName(predicted_class)}")
+    print(f"Prediction Results: {predicted_class}, {convertClassNumToClassName(predicted_class)}, {imageName}")
 
     return predicted_class
 
@@ -54,12 +54,21 @@ def convertClassNumToClassName(classNum):
             _classNum = splitLine[0]
 
             if int(_classNum) == int(classNum):
-                return " ".join(splitLine[1:])
+                return " ".join(splitLine[1:]).strip()
             
     return "Could not determine class name."
 
 if __name__ == "__main__":
-    image_path = int(sys.argv[1])
-    image_path = "./processed_data/test_images/common_eider_0.png"
-    image = Image.open(image_path).convert("RGB")
-    predict("bird_resnet50.pth", image)
+
+    testImages = []
+    #test all in test_images
+    if sys.argv[1] == "-a":
+        for imgFile in os.listdir(f"./processed_data/test_images/"):
+            testImages.append(imgFile)
+    else:
+        testImages.append(sys.argv[1])
+
+    for imageName in testImages:
+        imagePath = f"./processed_data/test_images/{imageName}"
+        image = Image.open(imagePath).convert("RGB")
+        predict("bird_resnet50.pth", image, imageName)

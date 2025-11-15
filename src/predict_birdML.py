@@ -9,7 +9,7 @@ def predict(modelName, image, imageName):
     model = models.resnet50(weights=None)
 
     # Change the classifier head if you had modified it during training
-    num_classes = 3   # (whatever your actual number of bird species was)
+    num_classes = int(modelName.split("_")[1])  # (whatever your actual number of bird species was)
     model.fc = torch.nn.Linear(model.fc.in_features, num_classes)
 
     model.load_state_dict(torch.load(f"./models/{modelName}", map_location=torch.device("cpu")))
@@ -26,10 +26,6 @@ def predict(modelName, image, imageName):
             std=[0.229, 0.224, 0.225]
         )
     ])
-
-    # Commented out because we will recieve a image selected by the user from the frontend
-    # image_path = "../common_eider_3.png"
-    # image = Image.open(image_path).convert("RGB")
 
     # Apply transforms and add batch dimension
     input_tensor = transform(image).unsqueeze(0)  # shape [1, 3, 224, 224]
@@ -61,7 +57,7 @@ def convertClassNumToClassName(classNum):
 if __name__ == "__main__":
 
     testImages = []
-    #test all in test_images
+    
     if sys.argv[1] == "-a":
         for imgFile in os.listdir(f"./processed_data/test_images/"):
             testImages.append(imgFile)
@@ -71,4 +67,4 @@ if __name__ == "__main__":
     for imageName in testImages:
         imagePath = f"./processed_data/test_images/{imageName}"
         image = Image.open(imagePath).convert("RGB")
-        predict("bird_resnet50.pth", image, imageName)
+        predict("birdML_15_birds.pth", image, imageName)

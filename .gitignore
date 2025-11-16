@@ -33,6 +33,7 @@ models/*.pt
 *.pth
 models/*.ckpt
 models/*.onnx
+yolov8n.pt
 
 # If you're using Git LFS, you can remove these exclusions ↑ and track models with LFS instead.
 

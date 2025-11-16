@@ -3,13 +3,14 @@ import torch
 from torchvision import models
 from torchvision import transforms
 from PIL import Image
-#Ex. model = "bird_resnet50.pth" (searches in our models folder)
+
+import findBird
+
 def predict(modelName, image, imageName):
     # Recreate the same model architecture
     model = models.resnet50(weights=None)
 
-    # Change the classifier head if you had modified it during training
-    num_classes = 3   # (whatever your actual number of bird species was)
+    num_classes = int(modelName.split("_")[1])
     model.fc = torch.nn.Linear(model.fc.in_features, num_classes)
 
     model.load_state_dict(torch.load(f"./models/{modelName}", map_location=torch.device("cpu")))
@@ -27,10 +28,6 @@ def predict(modelName, image, imageName):
         )
     ])
 
-    # Commented out because we will recieve a image selected by the user from the frontend
-    # image_path = "../common_eider_3.png"
-    # image = Image.open(image_path).convert("RGB")
-
     # Apply transforms and add batch dimension
     input_tensor = transform(image).unsqueeze(0)  # shape [1, 3, 224, 224]
 
@@ -43,6 +40,7 @@ def predict(modelName, image, imageName):
 
     return predicted_class
 
+# used to convert a class number from our training model to the actual name of the bird
 def convertClassNumToClassName(classNum):
 
     with open("./processed_data/classes.txt", "r") as classFile:
@@ -61,14 +59,25 @@ def convertClassNumToClassName(classNum):
 if __name__ == "__main__":
 
     testImages = []
-    #test all in test_images
+
+    if(len(sys.argv) < 3):
+        print(f"Missing argument: {len(sys.argv)}/3 arguments provided.")
+        print("Example: python3 src/predict_birdML.py -a 10")
+        sys.exit(1)
+
+    #first arg is the image/images, use -a for all
     if sys.argv[1] == "-a":
         for imgFile in os.listdir(f"./processed_data/test_images/"):
             testImages.append(imgFile)
     else:
         testImages.append(sys.argv[1])
 
+    #second arg is for the model num
+    modelNum = sys.argv[2]
+    model = f"birdML_{modelNum}_birds.pth"
+
     for imageName in testImages:
+        
         imagePath = f"./processed_data/test_images/{imageName}"
-        image = Image.open(imagePath).convert("RGB")
-        predict("bird_resnet50.pth", image, imageName)
+        image = findBird.findAndCropBird(imageName)
+        predict(model, image, imageName)

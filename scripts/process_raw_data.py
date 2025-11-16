@@ -1,22 +1,36 @@
+import sys
 import cv2
 import os
 import shutil
 
-firstClass = 295
-boxDimension = 224
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "src")))
+import findBird
 
 rawImgPath = "raw_data/images"
 newImgPath = "processed_data/images"
 if not os.path.exists(f"{newImgPath}"): os.mkdir(f"{newImgPath}")
 
 nextClass = 0
+boxDimension = 224
+
+# overhead for bounding boxes
+bbox_dict = {}
+with open("raw_data/bounding_boxes.txt", "r") as f:
+	for line in f:
+		parts = line.strip().split()
+		img_name = parts[0].replace("-", "") + ".jpg"
+		bbox = list(map(int, parts[1:])) # [x, y, width, height]
+		bbox_dict[img_name] = bbox
 
 open("processed_data/classes.txt", "w").close()
 
 with open("raw_data/classes.txt", "r") as rawClassFile:
+
 	content = rawClassFile.read()
 	lines = content.strip().split("\n")
+
 	with open("processed_data/classes.txt", "a") as newClassFile:
+
 		for i in range(295, 1011):
 
 			folderName = str(i)
@@ -37,35 +51,25 @@ with open("raw_data/classes.txt", "r") as rawClassFile:
 
 			for imgFile in os.listdir(f"{rawImgPath}/{folderName}"):
 
+				imageName = imgFile.split(".")[0]
+
 				img = cv2.imread(f"{rawImgPath}/{folderName}/{imgFile}")
 
 				if img is None:
 					continue
 
-				baseHeight, baseWidth, baseChannels = img.shape
+				#crop using bounding boxes
+				if imgFile in bbox_dict:
+					x, y, w, h = bbox_dict[imgFile]
+					print(x, y, w, h)
+					# Make sure bbox doesn't go outside image
+					x1 = max(0, x)
+					y1 = max(0, y)
+					x2 = min(img.shape[1], x + w)
+					y2 = min(img.shape[0], y + h)
+					full_img = img[y1:y2, x1:x2]
 
-				if baseWidth > baseHeight:
-					ratio = baseHeight/baseWidth
-					width = boxDimension
-					height = int(boxDimension * ratio)
-				else:
-					ratio = baseWidth/baseHeight
-					height = boxDimension
-					width = int(boxDimension * ratio)
-
-				resized_img = cv2.resize(img, (width, height))
-
-				top = (boxDimension - height) // 2
-				bottom = boxDimension - height - top
-				left = (boxDimension - width) // 2
-				right = boxDimension - width - left
-
-				squared_img = cv2.copyMakeBorder(
-					resized_img,
-					top, bottom, left, right,
-					cv2.BORDER_CONSTANT,
-					value=[0, 0, 0]  # Black padding
-				)
+				squared_img =  findBird.resizeAndPaddBlack(full_img)
 
 				cv2.imwrite(f"{newImgPath}/{nextClass}/{imgFile}", squared_img)
 

@@ -7,10 +7,16 @@ import threading
 import signal
 from datetime import datetime
 
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from predict import predict
+
 from http.server import HTTPServer, BaseHTTPRequestHandler
 from urllib.parse import urlparse, parse_qs, parse_qsl, unquote
 
 logging.basicConfig(level=logging.INFO)
+
+from PIL import Image
+import io
 
 class MyHandler( BaseHTTPRequestHandler ):
 
@@ -173,7 +179,86 @@ class MyHandler( BaseHTTPRequestHandler ):
             except FileNotFoundError:
                 self.send_error(404, "File Not Found: %s" % self.path)
             except Exception as e:
-                logging.error(f"Unexpected error: {e}") 
+                logging.error(f"Unexpected error: {e}")
+
+        elif parsed.path in ['/predict']:
+            try:
+                content_length = int(self.headers.get('Content-Length', 0))
+                content_type = self.headers.get('Content-Type')
+
+                if not content_type or "multipart/form-data" not in content_type:
+                    self.send_error(400, "Expected multipart/form-data")
+                    return
+
+                # Read body
+                body = self.rfile.read(content_length)
+
+                # Extract boundary
+                boundary = content_type.split("boundary=")[1].encode()
+                boundary_bytes = b"--" + boundary
+
+                # Split parts
+                parts = body.split(boundary_bytes)
+
+                image_bytes = None
+                image_name = None
+
+                for part in parts:
+                    if b"Content-Disposition" not in part:
+                        continue
+
+                    # Find the image field
+                    if b'name="image"' in part:
+                        header_end = part.find(b"\r\n\r\n")
+                        if header_end == -1:
+                            continue
+
+                        # Extract file data
+                        image_bytes = part[header_end+4:]
+                        if image_bytes.endswith(b"\r\n"):
+                            image_bytes = image_bytes[:-2]
+
+                        cd_line = part.split(b"\r\n")[0]
+                        if b'filename="' in cd_line:
+                            start = cd_line.find(b'filename="') + len(b'filename="')
+                            end = cd_line.find(b'"', start)
+                            image_name = cd_line[start:end].decode('utf-8')
+
+                        break
+
+                if image_bytes is None:
+                    self.send_error(400, "Image not found in form-data")
+                    return
+
+                if not image_name:
+                    image_name = "uploaded_image"
+
+                print(f"Received image '{image_name}', size: {len(image_bytes)} bytes")
+
+                image = Image.open(io.BytesIO(image_bytes))
+                image = image.convert("RGB")
+
+                prediction_result = predict("birdML_5_birds.pth", image, image_name)
+                print("Prediction result:", prediction_result)
+
+                response = json.dumps({
+                    "status": "ok",
+                    "image_name": image_name,
+                    "size": len(image_bytes),
+                    "prediction": prediction_result
+                })
+
+                self.send_response(200)
+                self.send_cors_headers()
+                self.send_header("Content-Type", "application/json")
+                self.send_header("Content-Length", str(len(response)))
+                self.end_headers()
+                self.wfile.write(response.encode("utf-8"))
+
+            except Exception as e:
+                logging.error(f"Unexpected error in /predict: {e}")
+                self.send_error(500, "Server error")
+
 
     def do_OPTIONS(self):
         self.send_response(200)

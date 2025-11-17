@@ -35,6 +35,8 @@ class MyHandler( BaseHTTPRequestHandler ):
             self.do_GET()
         elif self.command == "POST":
             self.do_POST()
+        elif self.command == "OPTIONS":
+            self.do_OPTIONS()
         else:
             self.send_error(501, "Unsupported method")
 
@@ -52,6 +54,7 @@ class MyHandler( BaseHTTPRequestHandler ):
                 content = fp.read()
 
                 self.send_response( 200 )
+                self.send_cors_headers()
                 self.send_header( "Content-type", "text/html" )
                 self.send_header( "Content-length", len( content ) )
                 self.end_headers()
@@ -71,6 +74,7 @@ class MyHandler( BaseHTTPRequestHandler ):
                 content = fp.read()
 
                 self.send_response( 200 )
+                self.send_cors_headers()
                 self.send_header( "Content-type", "text/html" )
                 self.send_header( "Content-length", len( content ) )
                 self.end_headers()
@@ -90,6 +94,7 @@ class MyHandler( BaseHTTPRequestHandler ):
                 content = fp.read()
 
                 self.send_response( 200 )
+                self.send_cors_headers()
                 self.send_header( "Content-type", "text/html" )
                 self.send_header( "Content-length", len( content ) )
                 self.end_headers()
@@ -109,6 +114,7 @@ class MyHandler( BaseHTTPRequestHandler ):
                 content = fp.read()
 
                 self.send_response( 200 )
+                self.send_cors_headers()
                 self.send_header( "Content-type", "text/css" )
                 self.send_header( "Content-length", len( content ) )
                 self.end_headers()
@@ -128,6 +134,7 @@ class MyHandler( BaseHTTPRequestHandler ):
                 content = fp.read()
 
                 self.send_response( 200 )
+                self.send_cors_headers()
                 self.send_header("Content-Type", "application/javascript")
                 self.send_header( "Content-length", len( content ) )
                 self.end_headers()
@@ -156,6 +163,7 @@ class MyHandler( BaseHTTPRequestHandler ):
                 content = ""
 
                 self.send_response( 200 )
+                self.send_cors_headers()
                 self.send_header("Content-Type", "text/json")
                 self.send_header( "Content-length", len( content ) )
                 self.end_headers()
@@ -166,6 +174,18 @@ class MyHandler( BaseHTTPRequestHandler ):
                 self.send_error(404, "File Not Found: %s" % self.path)
             except Exception as e:
                 logging.error(f"Unexpected error: {e}") 
+
+    def do_OPTIONS(self):
+        self.send_response(200)
+        self.send_header("Access-Control-Allow-Origin", "*")
+        self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+        self.send_header("Access-Control-Allow-Headers", "Content-Type")
+        self.end_headers()
+
+    def send_cors_headers(self):
+        self.send_header("Access-Control-Allow-Origin", "*")
+        self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+        self.send_header("Access-Control-Allow-Headers", "Content-Type")
 
 if __name__ == "__main__":
     httpd = HTTPServer( ( '0.0.0.0', int(sys.argv[1]) ), MyHandler )

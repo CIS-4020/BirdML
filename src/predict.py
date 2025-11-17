@@ -3,10 +3,11 @@ import torch
 from torchvision import models
 from torchvision import transforms
 from PIL import Image
+from scripts import class_num_to_name as classConvert
 
 import findBird
 
-def predict(modelName, image, imageName):
+def predict(modelName, image: Image.Image, imageName):
     # Recreate the same model architecture
     model = models.resnet50(weights=None)
 
@@ -15,9 +16,6 @@ def predict(modelName, image, imageName):
 
     model.load_state_dict(torch.load(f"./models/{modelName}", map_location=torch.device("cpu")))
     model.eval()  # set to evaluation mode
-
-    from torchvision import transforms
-    from PIL import Image
 
     transform = transforms.Compose([
         transforms.Resize((224, 224)),
@@ -36,25 +34,9 @@ def predict(modelName, image, imageName):
         _, predicted = outputs.max(1)
         predicted_class = predicted.item()
 
-    print(f"Prediction Results: {predicted_class}, {convertClassNumToClassName(predicted_class)}, {imageName}")
+    print(f"Prediction Results: {imageName} --> {classConvert.convertClassNumToClassName(predicted_class)}")
 
     return predicted_class
-
-# used to convert a class number from our training model to the actual name of the bird
-def convertClassNumToClassName(classNum):
-
-    with open("./processed_data/classes.txt", "r") as classFile:
-
-        for line in classFile:
-
-            splitLine = line.split(" ")
-
-            _classNum = splitLine[0]
-
-            if int(_classNum) == int(classNum):
-                return " ".join(splitLine[1:]).strip()
-            
-    return "Could not determine class name."
 
 if __name__ == "__main__":
 
@@ -62,12 +44,12 @@ if __name__ == "__main__":
 
     if(len(sys.argv) < 3):
         print(f"Missing argument: {len(sys.argv)}/3 arguments provided.")
-        print("Example: python3 src/predict_birdML.py -a 10")
+        print("Example: python3 src/predict.py -a 10")
         sys.exit(1)
 
     #first arg is the image/images, use -a for all
     if sys.argv[1] == "-a":
-        for imgFile in os.listdir(f"./processed_data/test_images/"):
+        for imgFile in os.listdir(f"./test_images/"):
             testImages.append(imgFile)
     else:
         testImages.append(sys.argv[1])
@@ -78,6 +60,6 @@ if __name__ == "__main__":
 
     for imageName in testImages:
         
-        imagePath = f"./processed_data/test_images/{imageName}"
+        imagePath = f"./test_images/{imageName}"
         image = findBird.findAndCropBird(imageName)
         predict(model, image, imageName)

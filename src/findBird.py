@@ -1,21 +1,20 @@
 import sys
 import os
 from PIL import Image
-import torch
 
 # pip install ultralytics
 from ultralytics import YOLO
 import cv2
 
 
-def findAndCropBird(imagePath):
+def findAndCropBird(imagePath) -> Image.Image:
 
-    croppedImagePath = "./processed_data/cropped_test_images"
+    croppedImagePath = "./cropped_test_images"
     if not os.path.exists(f"{croppedImagePath}"): os.mkdir(f"{croppedImagePath}")
     
     yolo_model = YOLO("yolov8n.pt")
 
-    image = cv2.imread(f"./processed_data/test_images/{imagePath}")
+    image = cv2.imread(f"./test_images/{imagePath}")
     if image is None:
         raise FileNotFoundError(f"Could not open image {imagePath}")
 

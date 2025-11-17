@@ -9,8 +9,6 @@ import torch
 def trainModel(numFolders=-1):
 	# Standard transform pipeline for ResNet input
 	train_transforms = transforms.Compose([
-		#transforms.Resize((224, 224)),			   # ResNet expects 224x224
-		
 
 		#Data augmentation
 		transforms.RandomHorizontalFlip(p=0.5),
@@ -31,7 +29,7 @@ def trainModel(numFolders=-1):
 		)
 	])
 
-	train_data = datasets.ImageFolder("./processed_data/images", transform=train_transforms)
+	train_data = datasets.ImageFolder("./train_test_data/train/images", transform=train_transforms)
 
 
 	numFolders = min(numFolders, len(train_data.classes))
@@ -100,8 +98,8 @@ def trainModel(numFolders=-1):
 	criterion = nn.CrossEntropyLoss()
 	optimizer = optim.Adam(model.fc.parameters(), lr=1e-3, weight_decay=1e-4)
 
-	# AI.TRAIN()
-	for epoch in range(5):  # increase epochs for better training
+	# TODO: LOOK INTO EARLY STOPPING
+	for epoch in range(20):  # increase epochs for better training
 		model.train()
 		total_loss = 0
 		for images, labels in train_loader:

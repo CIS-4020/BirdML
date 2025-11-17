@@ -1,15 +1,19 @@
+import os
 # used to convert a class number from our training model to the actual name of the bird
 def convertClassNumToClassName(classNum):
 
-    with open("./processed_data/classes.txt", "r") as classFile:
+	PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+	classes_path = os.path.join(PROJECT_ROOT, "processed_data", "classes.txt")
 
-        for line in classFile:
+	with open(classes_path) as classFile:
 
-            splitLine = line.split(" ")
+		for line in classFile:
 
-            _classNum = splitLine[0]
+			splitLine = line.split(" ")
 
-            if int(_classNum) == int(classNum):
-                return " ".join(splitLine[1:]).strip()
-            
-    return "Could not determine class name."
+			_classNum = splitLine[0]
+
+			if int(_classNum) == int(classNum):
+				return " ".join(splitLine[1:]).strip()
+
+	return "Could not determine class name."

@@ -22,8 +22,10 @@ venv/
 # -------------------------
 raw_data/*
 processed_data/*
-!processed_data/.gitkeep
+train_test_data/*
 !raw_data/.gitkeep
+!processed_data/.gitkeep
+!train_test_data/.gitkeep
 
 # -------------------------
 # Model weights & checkpoints
@@ -36,12 +38,6 @@ models/*.onnx
 yolov8n.pt
 
 # If you're using Git LFS, you can remove these exclusions ↑ and track models with LFS instead.
-
-# -------------------------
-# Data (raw or processed)
-# -------------------------
-raw_data/*
-!raw_data/.gitkeep
 
 # -------------------------
 # Logs & results

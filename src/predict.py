@@ -3,6 +3,8 @@ import torch
 from torchvision import models
 from torchvision import transforms
 from PIL import Image
+
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from scripts import class_num_to_name as classConvert
 
 import findBird

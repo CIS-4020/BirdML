@@ -3,7 +3,7 @@ import ImageUpload from './components/ImageUpload'
 
 function App() {
 
-  return (
+    return (
         <>
             <div id="container">
                 <div id="header">
@@ -14,12 +14,12 @@ function App() {
                         <ImageUpload />
                     </div>
                     <div>
-                        egopjikafoueasnf
+                        WE UP IN HERE BIRDML'ing
                     </div>
                 </section>
             </div>
         </>
-  )
+    )
 }
 
 export default App

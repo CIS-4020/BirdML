@@ -1,8 +1,9 @@
 #root {
-  max-width: 1280px;
   margin: 0 auto;
   padding: 2rem;
   text-align: center;
+  background: url("./assets/birdml.jpg") center center no-repeat;
+  background-size: cover;
 }
 
 .logo {
@@ -63,9 +64,9 @@
     box-sizing: border-box;
 }
 
-#main div {
-    border: 2px solid black;
-}
+/* #main div {
+    background-color: rgba(13, 107, 0, 0.263);
+} */
 
 #container {
     display: flex;
@@ -78,6 +79,7 @@ h1 {
     margin: 0;
     padding: 32px;
     height: 100%;
+    color: rgb(1, 20, 0);
 }
 
 .imgUpload {
@@ -113,8 +115,8 @@ h1 {
 .plus {
   width: 100%;
   height: 100%;
-  background: #2c2f38;
-  border: 2px solid #555;
+  background: #00000082;
+  border: 5px solid #000000;
   color: white;
   font-size: 36px;
   font-weight: 500;
@@ -124,10 +126,12 @@ h1 {
   cursor: pointer;
   user-select: none;
   transition: background 0.2s ease;
+  box-sizing: border-box;
+  border-radius: 10px;
 }
 
 .plus:hover {
-  background: #3a3d47;
+  background: #000000a3;
 }
 
 .plus input {

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "../App.css";
+import "../server.ts";
 
 interface ImageUploadProps {
   onChange?: (file: File | null) => void;

@@ -10,12 +10,12 @@ function App() {
                     <h1>BirdML</h1>
                 </div>
                 <section id="main">
-                    <div>
-                        <ImageUpload />
-                    </div>
-                    <div>
-                        WE UP IN HERE BIRDML'ing
-                        <img id="myImage" />
+                    <ImageUpload />
+                    <div className="fileUpload">
+                        <div className="image">
+                            <img id="myImage" />
+                        </div>
+                        <div id="processBtn">WE UP IN HERE BIRDML'ing</div>
                     </div>
                 </section>
             </div>

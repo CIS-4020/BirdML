@@ -47,26 +47,26 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ onChange }) => {
     };
 
     return (
-        <div className="imgUpload">
-            <label className="fileUpload">
-                {preview ? (
-                    <img src={preview} alt="Uploaded" className="upload-preview" />
-                ) : (
-                    <span className="plus">+</span>
-                )}
+        <label className="fileUpload">
+            {preview ? (
+                <div className="image">
+                    <img src={preview} alt="Uploaded" />
+                </div>
+            ) : (
+                <span className="plus">+</span>
+            )}
 
-                <input
-                    type="file"
-                    accept="image/*"
-                    className="hidden"
-                    onChange={handleFileChange}
-                />
+            <input
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={handleFileChange}
+            />
 
-                <button id="processBtn" onClick={handleProcess}>
-                    Process
-                </button>
-            </label>
-        </div>
+            <button id="processBtn" onClick={handleProcess}>
+                Process
+            </button>
+        </label>
     );
 };
 

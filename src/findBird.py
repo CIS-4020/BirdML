@@ -73,6 +73,3 @@ def resizeAndPaddBlack(img):
 if __name__ == "__main__":
     imagePath = sys.argv[1]
     findAndCropBird(imagePath)
-
-    
-

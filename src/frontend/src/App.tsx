@@ -15,6 +15,7 @@ function App() {
                     </div>
                     <div>
                         WE UP IN HERE BIRDML'ing
+                        <img id="myImage" />
                     </div>
                 </section>
             </div>

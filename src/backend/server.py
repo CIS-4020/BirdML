@@ -241,11 +241,15 @@ class MyHandler( BaseHTTPRequestHandler ):
                 prediction_result = predict("birdML_5_birds.pth", image, image_name)
                 print("Prediction result:", prediction_result)
 
+                imagePath = f"../../single_data/{prediction_result}.jpg"
+                resultImage = Image.open(imagePath).convert("RGB")
+
                 response = json.dumps({
                     "status": "ok",
                     "image_name": image_name,
                     "size": len(image_bytes),
-                    "prediction": prediction_result
+                    "prediction": prediction_result,
+                    "prediction_image": pil_to_base64(resultImage)
                 })
 
                 self.send_response(200)
@@ -271,6 +275,14 @@ class MyHandler( BaseHTTPRequestHandler ):
         self.send_header("Access-Control-Allow-Origin", "*")
         self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
         self.send_header("Access-Control-Allow-Headers", "Content-Type")
+
+import base64
+from io import BytesIO
+
+def pil_to_base64(img: Image.Image):
+    buffered = BytesIO()
+    img.save(buffered, format="PNG")
+    return base64.b64encode(buffered.getvalue()).decode("utf-8")
 
 if __name__ == "__main__":
     httpd = HTTPServer( ( '0.0.0.0', int(sys.argv[1]) ), MyHandler )

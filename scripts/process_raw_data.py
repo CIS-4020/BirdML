@@ -8,7 +8,9 @@ import findBird
 
 rawImgPath = "raw_data/images"
 newImgPath = "processed_data/images"
+singleImgPath = "single_data"
 if not os.path.exists(f"{newImgPath}"): os.mkdir(f"{newImgPath}")
+if not os.path.exists(f"{singleImgPath}"): os.mkdir(f"{singleImgPath}")
 
 nextClass = 0
 boxDimension = 224
@@ -49,6 +51,7 @@ with open("raw_data/classes.txt", "r") as rawClassFile:
 			newClassFile.write(str(nextClass) + " " + className + "\n")
 			newClassFile.flush()
 
+			firstImage = True
 			for imgFile in os.listdir(f"{rawImgPath}/{folderName}"):
 
 				imageName = imgFile.split(".")[0]
@@ -58,10 +61,12 @@ with open("raw_data/classes.txt", "r") as rawClassFile:
 				if img is None:
 					continue
 
+				if firstImage:
+					cv2.imwrite(f"{singleImgPath}/{nextClass}.jpg", img)
+
 				#crop using bounding boxes
 				if imgFile in bbox_dict:
 					x, y, w, h = bbox_dict[imgFile]
-					print(x, y, w, h)
 					# Make sure bbox doesn't go outside image
 					x1 = max(0, x)
 					y1 = max(0, y)
@@ -72,5 +77,7 @@ with open("raw_data/classes.txt", "r") as rawClassFile:
 				squared_img =  findBird.resizeAndPaddBlack(full_img)
 
 				cv2.imwrite(f"{newImgPath}/{nextClass}/{imgFile}", squared_img)
+
+				firstImage = False
 
 			nextClass+=1

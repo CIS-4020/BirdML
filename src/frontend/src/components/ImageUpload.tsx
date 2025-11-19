@@ -38,6 +38,8 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ onChange }) => {
 
         try {
             const result = await getPrediction(selectedFile);
+            const img = document.getElementById("myImage") as HTMLImageElement;
+            img.src = `data:image/png;base64,${result.prediction_image}`;
             console.log("Prediction:", result);
         } catch (err) {
             console.error("Prediction failed:", err);

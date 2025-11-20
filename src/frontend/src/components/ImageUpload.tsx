@@ -5,12 +5,14 @@ import { getPrediction } from "../server.ts"; // your helper function
 interface ImageUploadProps {
   onChange?: (file: File | null) => void;
   onPrediction?: (result: string) => void;
+  onConfidence?: (result: string) => void;
 }
 
-const ImageUpload: React.FC<ImageUploadProps> = ({ onChange, onPrediction }) => {
+const ImageUpload: React.FC<ImageUploadProps> = ({ onChange, onPrediction, onConfidence }) => {
     const [preview, setPreview] = useState<string | null>(null);
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [predictionResult, setPredictionResult] = useState<string>("");
+    const [confidence, setConfidence] = useState<string>("");
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0] || null;
@@ -20,6 +22,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ onChange, onPrediction }) => 
             setSelectedFile(null);
             onChange?.(null);
             onPrediction?.("");
+            onConfidence?.("");
             return;
         }
 
@@ -28,6 +31,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ onChange, onPrediction }) => 
         setSelectedFile(file);
         onChange?.(file);
         onPrediction?.(predictionResult);
+        onConfidence?.(confidence);
     };
 
     const handleProcess = async () => {
@@ -46,6 +50,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ onChange, onPrediction }) => 
             // resultBtn.innerHTML = "Result: " + predictionResult.split("(")[0] + "";
 
             onPrediction?.(result.prediction_string);
+            onConfidence?.(result.confidence);
         } catch (err) {
             console.error("Prediction failed:", err);
         }

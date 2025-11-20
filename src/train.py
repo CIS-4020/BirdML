@@ -31,7 +31,6 @@ def trainModel(numFolders=-1):
 
 	train_data = datasets.ImageFolder("./train_test_data/train/images", transform=train_transforms)
 
-
 	numFolders = min(numFolders, len(train_data.classes))
 	if numFolders > -1:
 		# Selecting a subset of the total bird classes

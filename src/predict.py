@@ -46,9 +46,14 @@ def predict(modelName, image, imageName):
         _, predicted = outputs.max(1)
         predicted_class = predicted.item()
 
-    print(f"Prediction Results: {imageName} --> {classConvert.convertClassNumToClassName(predicted_class)}")
+        probs = torch.nn.functional.softmax(outputs, dim=1)
+        confidence, predicted = probs.max(1)
+        confidence_score = confidence.item()
 
-    return predicted_class
+    print(f"Prediction Results: {imageName} --> {classConvert.convertClassNumToClassName(predicted_class)}")
+    print(f"Confidence Score: {confidence_score}")
+
+    return predicted_class, confidence_score
 
 if __name__ == "__main__":
 

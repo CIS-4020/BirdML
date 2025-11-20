@@ -234,7 +234,7 @@ class MyHandler( BaseHTTPRequestHandler ):
                 image = Image.open(io.BytesIO(image_bytes))
                 image = image.convert("RGB")
 
-                prediction_result = predict("birdML_5_birds.pth", image, image_name)
+                prediction_result, confidence_score = predict("birdML_10_birds.pth", image, image_name)
                 print("Prediction result:", prediction_result)
 
                 imagePath = f"../../single_data/{prediction_result}.jpg"
@@ -247,6 +247,7 @@ class MyHandler( BaseHTTPRequestHandler ):
                     "image_name": image_name,
                     "size": len(image_bytes),
                     "prediction": prediction_result,
+                    "confidence": str(confidence_score),
                     "prediction_string": prediction_string,
                     "prediction_image": pil_to_base64(resultImage)
                 })

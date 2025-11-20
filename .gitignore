@@ -23,6 +23,7 @@ venv/
 raw_data/*
 processed_data/*
 train_test_data/*
+single_data/*
 !raw_data/.gitkeep
 !processed_data/.gitkeep
 !train_test_data/.gitkeep

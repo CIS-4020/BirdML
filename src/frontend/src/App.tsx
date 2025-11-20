@@ -1,8 +1,10 @@
 import './App.css'
 import ImageUpload from './components/ImageUpload'
+import { useState } from "react";
 
 function App() {
-
+    const [prediction , setPrediction] = useState<string>("Upload a Bird Image");
+    
     return (
         <>
             <div id="container">
@@ -10,12 +12,15 @@ function App() {
                     <h1>BirdML</h1>
                 </div>
                 <section id="main">
-                    <ImageUpload />
+                    <ImageUpload 
+                        onChange={() => null}
+                        onPrediction={(result) => setPrediction(result)}
+                    />
                     <div className="fileUpload">
                         <div className="image">
                             <img id="myImage" />
                         </div>
-                        <div id="processBtn">WE UP IN HERE BIRDML'ing</div>
+                        <button id="resultBtn">Result: {prediction.split("(")[0]}</button>
                     </div>
                 </section>
             </div>

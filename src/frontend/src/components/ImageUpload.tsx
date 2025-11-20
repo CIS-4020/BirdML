@@ -4,30 +4,30 @@ import { getPrediction } from "../server.ts"; // your helper function
 
 interface ImageUploadProps {
   onChange?: (file: File | null) => void;
+  onPrediction?: (result: string) => void;
 }
 
-const ImageUpload: React.FC<ImageUploadProps> = ({ onChange }) => {
+const ImageUpload: React.FC<ImageUploadProps> = ({ onChange, onPrediction }) => {
     const [preview, setPreview] = useState<string | null>(null);
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
-    const [fileName, setFileName] = useState<string>("");
+    const [predictionResult, setPredictionResult] = useState<string>("");
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0] || null;
 
         if (!file) {
             setPreview(null);
-            setFileName("");
             setSelectedFile(null);
             onChange?.(null);
+            onPrediction?.("");
             return;
         }
 
         const previewURL = URL.createObjectURL(file);
         setPreview(previewURL);
-        setFileName(file.name);
         setSelectedFile(file);
-
         onChange?.(file);
+        onPrediction?.(predictionResult);
     };
 
     const handleProcess = async () => {
@@ -41,6 +41,11 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ onChange }) => {
             const img = document.getElementById("myImage") as HTMLImageElement;
             img.src = `data:image/png;base64,${result.prediction_image}`;
             console.log("Prediction:", result);
+
+            // const resultBtn = document.getElementById("resultBtn") as HTMLButtonElement;
+            // resultBtn.innerHTML = "Result: " + predictionResult.split("(")[0] + "";
+
+            onPrediction?.(result.prediction_string);
         } catch (err) {
             console.error("Prediction failed:", err);
         }

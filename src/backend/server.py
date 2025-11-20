@@ -9,6 +9,7 @@ from datetime import datetime
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from predict import predict
+from scripts import class_num_to_name as classConvert
 
 from http.server import HTTPServer, BaseHTTPRequestHandler
 from urllib.parse import urlparse, parse_qs, parse_qsl, unquote
@@ -190,14 +191,11 @@ class MyHandler( BaseHTTPRequestHandler ):
                     self.send_error(400, "Expected multipart/form-data")
                     return
 
-                # Read body
                 body = self.rfile.read(content_length)
 
-                # Extract boundary
                 boundary = content_type.split("boundary=")[1].encode()
                 boundary_bytes = b"--" + boundary
 
-                # Split parts
                 parts = body.split(boundary_bytes)
 
                 image_bytes = None
@@ -207,13 +205,11 @@ class MyHandler( BaseHTTPRequestHandler ):
                     if b"Content-Disposition" not in part:
                         continue
 
-                    # Find the image field
                     if b'name="image"' in part:
                         header_end = part.find(b"\r\n\r\n")
                         if header_end == -1:
                             continue
 
-                        # Extract file data
                         image_bytes = part[header_end+4:]
                         if image_bytes.endswith(b"\r\n"):
                             image_bytes = image_bytes[:-2]
@@ -244,11 +240,14 @@ class MyHandler( BaseHTTPRequestHandler ):
                 imagePath = f"../../single_data/{prediction_result}.jpg"
                 resultImage = Image.open(imagePath).convert("RGB")
 
+                prediction_string = classConvert.convertClassNumToClassName(prediction_result)
+
                 response = json.dumps({
                     "status": "ok",
                     "image_name": image_name,
                     "size": len(image_bytes),
                     "prediction": prediction_result,
+                    "prediction_string": prediction_string,
                     "prediction_image": pil_to_base64(resultImage)
                 })
 

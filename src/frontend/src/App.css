@@ -131,6 +131,31 @@ h1 {
 	margin-top: 8px;
 	flex: 0 0 auto; /* fixed-size bottom */
 	width: 100%;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    font-size: 1em;
+    font-weight: 500;
+    font-family: inherit;
+    background-color: #1a1a1a;
+    cursor: pointer;
+    transition: border-color 0.25s;
+    box-sizing: border-box;
+}
+
+#resultBtn {
+    padding: 8px;
+	margin-top: 8px;
+	flex: 0 0 auto; /* fixed-size bottom */
+	width: 100%;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    font-size: 1em;
+    font-weight: 500;
+    font-family: inherit;
+    background-color: #1a1a1a;
+    cursor: pointer;
+    transition: border-color 0.25s;
+    box-sizing: border-box;
 }
 
 .hidden {

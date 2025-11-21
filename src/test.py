@@ -14,13 +14,14 @@ if __name__ == "__main__":
 
 	testImages = []
 
-	if(len(sys.argv) < 2):
-		print(f"Missing argument: Need number for choice of trained model")
-		print("Example: python3 src/test.py 10")
+	if(len(sys.argv) < 3):
+		print(f"Missing arguments: Need number for choice of trained model and fold number")
+		print("Example: python3 src/test.py 10 3")
 		sys.exit(1)
 
 	modelNum = sys.argv[1]
-	modelName = f"birdML_{modelNum}_birds.pth"
+	foldNum = sys.argv[2]
+	modelName = f"birdML_{modelNum}_birds_{foldNum}.pth"
 
 	successRates = list()
 
@@ -30,7 +31,7 @@ if __name__ == "__main__":
 
 		for imageName in os.listdir(f"{testImgPath}/{imgFolder}"):
 			image = Image.open(f"{testImgPath}/{imgFolder}/{imageName}").convert("RGB")
-			predictedClassInt = predict.predict(modelName, image, f"{convertClassNumToClassName(imgFolder)} Image#{imgCount}")
+			predictedClassInt, _ = predict.predict(modelName, image, f"{convertClassNumToClassName(imgFolder)} Image#{imgCount}")
 			if int(imgFolder) == predictedClassInt:
 				successCount+=1
 			imgCount+=1

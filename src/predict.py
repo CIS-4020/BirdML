@@ -16,7 +16,7 @@ def load_model(model_name):
     if not os.path.exists(model_path):
         raise FileNotFoundError(f"Model not found: {model_path}")
 
-    print(f"Loading model from: {model_path}")
+    # print(f"Loading model from: {model_path}")
     return model_path
 
 def predict(modelName, image, imageName):
@@ -50,8 +50,8 @@ def predict(modelName, image, imageName):
         confidence, predicted = probs.max(1)
         confidence_score = confidence.item()
 
-    print(f"Prediction Results: {imageName} --> {classConvert.convertClassNumToClassName(predicted_class)}")
-    print(f"Confidence Score: {confidence_score}")
+    # print(f"Prediction Results: {imageName} --> {classConvert.convertClassNumToClassName(predicted_class)}")
+    # print(f"Confidence Score: {confidence_score}")
 
     return predicted_class, confidence_score
 

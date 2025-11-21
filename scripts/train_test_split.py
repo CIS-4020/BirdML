@@ -29,8 +29,8 @@ if not os.path.exists(f"{testImgPath}"): os.mkdir(f"{testImgPath}")
 for imgFolder in os.listdir(f"{processedImgPath}"):
 	files = os.listdir(os.path.join(processedImgPath, imgFolder))
 
-	# 80%/20% Train/Test Split
-	trainImgAmount = int(len(files) * 0.8)
+	# 90%/10% Train/Test Split
+	trainImgAmount = int(len(files) * 0.9)
 	trainImages = set(random.sample(files, trainImgAmount))
 	testImages = set(files) - trainImages
 

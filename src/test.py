@@ -10,20 +10,10 @@ import predict
 
 testImgPath = "train_test_data/test/images"
 
-if __name__ == "__main__":
-
-	testImages = []
-
-	if(len(sys.argv) < 3):
-		print(f"Missing arguments: Need number for choice of trained model and fold number")
-		print("Example: python3 src/test.py 10 3")
-		sys.exit(1)
-
-	modelNum = sys.argv[1]
-	foldNum = sys.argv[2]
-	modelName = f"birdML_{modelNum}_birds_{foldNum}.pth"
-
+def test(modelNum, foldNum):
 	successRates = list()
+
+	modelName = f"birdML_{modelNum}_birds_{foldNum}.pth"
 
 	for imgFolder in range(int(modelNum)):
 		imgCount = 0
@@ -38,3 +28,16 @@ if __name__ == "__main__":
 
 		successRates.append(successCount/imgCount*100)
 	print(successRates)
+
+
+if __name__ == "__main__":
+
+	if(len(sys.argv) < 3):
+		print(f"Missing arguments: Need number for choice of trained model and fold number")
+		print("Example: python3 src/test.py 10 3")
+		sys.exit(1)
+
+	modelNum = sys.argv[1]
+	foldNum = sys.argv[2]
+
+	test(modelNum, foldNum)

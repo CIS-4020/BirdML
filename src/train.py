@@ -6,8 +6,9 @@ from torchvision.models import ResNet50_Weights
 from torch import nn, optim
 import torch
 from sklearn.model_selection import KFold
+from test import test
 
-def trainModel(numFolders=-1):
+def trainModel(numFolders=-1, num_epochs=20):
 	# Standard transform pipeline for ResNet input
 	train_transforms = transforms.Compose([
 
@@ -72,6 +73,9 @@ def trainModel(numFolders=-1):
 
 		# train_loader = DataLoader(train_subset, batch_size=32, sampler=SubsetRandomSampler(train_idx))
 		# test_loader = DataLoader(train_subset, batch_size=32, sampler=SubsetRandomSampler(test_idx))
+        
+	best_fold=0
+	best_fold_score=0
 		
 	for fold, (train_idx, test_idx) in enumerate(kf.split(train_data)):
 		train_loader = DataLoader(train_data, batch_size=32, sampler=SubsetRandomSampler(train_idx))
@@ -105,7 +109,7 @@ def trainModel(numFolders=-1):
 		criterion = nn.CrossEntropyLoss()
 		optimizer = optim.Adam(model.fc.parameters(), lr=1e-3, weight_decay=1e-4)
 
-		num_epochs = 20
+		num_epochs = 5
 		for epoch in range(num_epochs):  # increase epochs for better training
 			best_avg_test_loss = 0
 			early_stop_count = 0
@@ -173,10 +177,18 @@ def trainModel(numFolders=-1):
 		overfit_penalty=max(0, avg_train_loss-avg_test_loss)
 		eval_score = loss_weight*(1-norm_loss) + acc_weight*norm_acc - overfit_weight*overfit_penalty
 		
+		if (eval_score > best_fold_score):
+			best_fold_score = eval_score
+			best_fold = fold + 1
+		
 		torch.save(model.state_dict(), f"./models/birdML_{numFolders}_birds_{fold+1}.pth")
+		
+	# Evaluate best fold
+	print(f"Selected fold {best_fold} for evaluation. Score: {best_fold_score}")
+	test(numFolders, best_fold)
 
 if __name__ == "__main__":
-	if len(sys.argv) > 1:
-		trainModel(int(sys.argv[1]))
+	if len(sys.argv) > 2:
+		trainModel(int(sys.argv[1]), int(sys.argv[2]))
 	else:
 		trainModel()

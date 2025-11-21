@@ -109,7 +109,6 @@ def trainModel(numFolders=-1, num_epochs=20):
 		criterion = nn.CrossEntropyLoss()
 		optimizer = optim.Adam(model.fc.parameters(), lr=1e-3, weight_decay=1e-4)
 
-		num_epochs = 5
 		for epoch in range(num_epochs):  # increase epochs for better training
 			best_avg_test_loss = 0
 			early_stop_count = 0

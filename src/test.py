@@ -1,6 +1,7 @@
 import sys
 import os
 from PIL import Image
+import statistics
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -12,6 +13,7 @@ testImgPath = "train_test_data/test/images"
 
 def test(modelNum, foldNum):
 	successRates = list()
+	accuracyList = list()
 
 	modelName = f"birdML_{modelNum}_birds_{foldNum}.pth"
 
@@ -30,7 +32,11 @@ def test(modelNum, foldNum):
 			"Bird": convertClassNumToClassName(imgFolder),
 			"%": successCount / imgCount * 100
 		}))
+
+		accuracyList.append(successCount / imgCount * 100)
 	print(successRates)
+	print(statistics.median(accuracyList))
+		
 
 
 if __name__ == "__main__":

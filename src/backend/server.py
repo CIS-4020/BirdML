@@ -234,7 +234,7 @@ class MyHandler( BaseHTTPRequestHandler ):
                 image = Image.open(io.BytesIO(image_bytes))
                 image = image.convert("RGB")
 
-                prediction_result, confidence_score = predict("birdML_10_birds.pth", image, image_name)
+                prediction_result, confidence_score = predict("birdML_50_birds_2.pth", image, image_name)
                 print("Prediction result:", prediction_result)
 
                 imagePath = f"../../single_data/{prediction_result}.jpg"

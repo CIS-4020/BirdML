@@ -7,6 +7,7 @@ from torch import nn, optim
 import torch
 from sklearn.model_selection import KFold
 from test import test
+from graph import graphEpochData
 
 def trainModel(numFolders=-1, num_epochs=20):
 	# Standard transform pipeline for ResNet input
@@ -70,12 +71,12 @@ def trainModel(numFolders=-1, num_epochs=20):
 		print("Number of classes for model:", numFolders)
 
 		train_data = train_subset
-
-		# train_loader = DataLoader(train_subset, batch_size=32, sampler=SubsetRandomSampler(train_idx))
-		# test_loader = DataLoader(train_subset, batch_size=32, sampler=SubsetRandomSampler(test_idx))
         
 	best_fold=0
 	best_fold_score=0
+	best_model = None
+
+	fold_data=[]
 		
 	for fold, (train_idx, test_idx) in enumerate(kf.split(train_data)):
 		train_loader = DataLoader(train_data, batch_size=32, sampler=SubsetRandomSampler(train_idx))
@@ -109,8 +110,10 @@ def trainModel(numFolders=-1, num_epochs=20):
 		criterion = nn.CrossEntropyLoss()
 		optimizer = optim.Adam(model.fc.parameters(), lr=1e-3, weight_decay=1e-4)
 
+		epoch_data = []
+
+		best_avg_test_loss = 0
 		for epoch in range(num_epochs):  # increase epochs for better training
-			best_avg_test_loss = 0
 			early_stop_count = 0
 			early_stop_condition = 20 // 6
 			
@@ -151,6 +154,13 @@ def trainModel(numFolders=-1, num_epochs=20):
 			avg_test_loss = test_loss_sum / len(test_loader)
 			accuracy = correct/total
 
+			epoch_data.append({
+				"train_loss": avg_train_loss,
+				"test_loss": avg_test_loss,
+				"accuracy": accuracy
+			})
+			
+
 			print(
 				f"Fold {fold+1} | Epoch {epoch+1:02d} | "
 				f"Train Loss: {avg_train_loss:.4f} | "
@@ -165,6 +175,8 @@ def trainModel(numFolders=-1, num_epochs=20):
 				early_stop_count += 1
 				if early_stop_count >= early_stop_condition:
 					break
+
+		fold_data.append(epoch_data)
 		
 		max_loss=1
 		min_loss=0
@@ -178,13 +190,15 @@ def trainModel(numFolders=-1, num_epochs=20):
 		
 		if (eval_score > best_fold_score):
 			best_fold_score = eval_score
+			best_model = model
 			best_fold = fold + 1
-		
-		torch.save(model.state_dict(), f"./models/birdML_{numFolders}_birds_{fold+1}.pth")
-		
+
 	# Evaluate best fold
 	print(f"Selected fold {best_fold} for evaluation. Score: {best_fold_score}")
+	torch.save(best_model.state_dict(), f"./models/birdML_{numFolders}_birds.pth")
 	test(numFolders, best_fold)
+
+	graphEpochData(fold_data[best_fold-1])
 
 if __name__ == "__main__":
 	if len(sys.argv) > 2:

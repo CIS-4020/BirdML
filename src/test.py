@@ -14,6 +14,14 @@ testImgPath = "train_test_data/test/images"
 def test(modelNum, foldNum):
 	successRates = list()
 	accuracyList = list()
+	worstBirdName = ""
+	worstBirdAccuracy = 100
+	bestBirdName = ""
+	bestBirdAccuracy = 0
+
+	totalSuccessCount = 0
+	totalImageCount = 0
+
 
 	modelName = f"birdML_{modelNum}_birds_{foldNum}.pth"
 
@@ -28,14 +36,32 @@ def test(modelNum, foldNum):
 				successCount+=1
 			imgCount+=1
 
+		bird = convertClassNumToClassName(imgFolder)
+		acc = successCount / imgCount * 100
+
+		totalSuccessCount += successCount
+		totalImageCount += imgCount
+
+		if (acc < worstBirdAccuracy):
+			worstBirdName = bird
+			worstBirdAccuracy = acc
+		
+		if (acc > bestBirdAccuracy):
+			bestBirdAccuracy = acc
+			bestBirdName = bird
+
 		successRates.append(successRates.append({
-			"Bird": convertClassNumToClassName(imgFolder),
-			"%": successCount / imgCount * 100
+			"Bird": bird,
+			"%": acc
 		}))
 
-		accuracyList.append(successCount / imgCount * 100)
+		accuracyList.append(acc)
+
+
 	print(successRates)
-	print(statistics.median(accuracyList))
+	print(f"Median: {statistics.median(accuracyList)}%. Mean: {totalSuccessCount / totalImageCount * 100}%")
+	print(f"Best Bird: {bestBirdName} with an accuracy of {bestBirdAccuracy * 100}%")
+	print(f"Worst Bird: {worstBirdName} with an accuracy of {worstBirdAccuracy * 100}%")
 		
 
 

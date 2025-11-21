@@ -26,7 +26,10 @@ def test(modelNum, foldNum):
 				successCount+=1
 			imgCount+=1
 
-		successRates.append(successCount/imgCount*100)
+		successRates.append(successRates.append({
+			"Bird": convertClassNumToClassName(imgFolder),
+			"%": successCount / imgCount * 100
+		}))
 	print(successRates)
 
 

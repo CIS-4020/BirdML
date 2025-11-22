@@ -21,6 +21,7 @@ venv/
 # Data (raw or processed)
 # -------------------------
 raw_data/*
+results/*
 processed_data/*
 train_test_data/*
 single_data/*

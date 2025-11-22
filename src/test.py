@@ -11,11 +11,11 @@ import predict
 
 testImgPath = "train_test_data/test/images"
 
-def test(modelNum, foldNum):
+def test(modelNum):
 	successRates = list()
 	accuracyList = list()
 
-	modelName = f"birdML_{modelNum}_birds_{foldNum}.pth"
+	modelName = f"birdML_{modelNum}_birds.pth"
 
 	for imgFolder in range(int(modelNum)):
 		imgCount = 0
@@ -41,12 +41,11 @@ def test(modelNum, foldNum):
 
 if __name__ == "__main__":
 
-	if(len(sys.argv) < 3):
-		print(f"Missing arguments: Need number for choice of trained model and fold number")
-		print("Example: python3 src/test.py 10 3")
+	if(len(sys.argv) < 2):
+		print(f"Missing argument: Need number for choice of trained model")
+		print("Example: python3 src/test.py 10")
 		sys.exit(1)
 
 	modelNum = sys.argv[1]
-	foldNum = sys.argv[2]
 
-	test(modelNum, foldNum)
+	test(modelNum)

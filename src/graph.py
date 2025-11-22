@@ -1,24 +1,16 @@
 import matplotlib.pyplot as plt
 
-#Expecting: epoch_data: list({"train_loss", "test_loss", "accuracy"})
-def graphEpochData(epoch_data):
+#Expecting: fold_data: list(list(avg_test_loss))
+def graphFoldData(fold_data):
 	x = []
-	yTrain = []
-	yTest = []
-	yAcc = []
-	for i in range(len(epoch_data)):
-		x.append(i)
-		yTrain.append(epoch_data[i]["train_loss"])
-		yTest.append(epoch_data[i]["test_loss"])
-		yAcc.append(epoch_data[i]["accuracy"])
 
-	plt.plot(x, yTrain, label='Avg. Train Loss')
-	plt.plot(x, yTest, label='Avg. Test Loss')
-	plt.plot(x, yAcc, label='Avg. Accuracy')
+	for i, fold in enumerate(fold_data):
+		x = list(range(len(fold)))
+		plt.plot(x, fold, label=f'Fold #{i+1}')
 
 	plt.xlabel("Epoch")
-	plt.ylabel("Loss/Accuracy")
-	plt.title("Average Loss + Accuracy per Train Epoch")
+	plt.ylabel("Average Test Loss")
+	plt.title("Average Loss per Fold over Epochs")
 	plt.legend()
 
 	plt.show()

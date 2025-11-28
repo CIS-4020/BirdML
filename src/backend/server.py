@@ -92,66 +92,6 @@ class MyHandler( BaseHTTPRequestHandler ):
                 self.send_error(404, "File Not Found: %s" % self.path)
             except Exception as e:
                 logging.error(f"Unexpected error: {e}") 
-        
-        # give bubblesort
-        elif parsed.path in [ '/bubblesort.html' ]:
-
-            try:
-                fp = open( '../frontend'+self.path )
-                content = fp.read()
-
-                self.send_response( 200 )
-                self.send_cors_headers()
-                self.send_header( "Content-type", "text/html" )
-                self.send_header( "Content-length", len( content ) )
-                self.end_headers()
-
-                self.wfile.write( bytes( content, "utf-8" ) )
-                fp.close()
-            except FileNotFoundError:
-                self.send_error(404, "File Not Found: %s" % self.path)
-            except Exception as e:
-                logging.error(f"Unexpected error: {e}") 
-
-        # give styles
-        elif parsed.path in [ '/styles.css' ]:
-
-            try:
-                fp = open( '../frontend'+self.path )
-                content = fp.read()
-
-                self.send_response( 200 )
-                self.send_cors_headers()
-                self.send_header( "Content-type", "text/css" )
-                self.send_header( "Content-length", len( content ) )
-                self.end_headers()
-
-                self.wfile.write( bytes( content, "utf-8" ) )
-                fp.close()
-            except FileNotFoundError:
-                self.send_error(404, "File Not Found: %s" % self.path)
-            except Exception as e:
-                logging.error(f"Unexpected error: {e}") 
-
-        # give script
-        elif parsed.path in [ '/script.js' ]:
-
-            try:
-                fp = open( '../frontend'+self.path )
-                content = fp.read()
-
-                self.send_response( 200 )
-                self.send_cors_headers()
-                self.send_header("Content-Type", "application/javascript")
-                self.send_header( "Content-length", len( content ) )
-                self.end_headers()
-
-                self.wfile.write( bytes( content, "utf-8" ) )
-                fp.close()
-            except FileNotFoundError:
-                self.send_error(404, "File Not Found: %s" % self.path)
-            except Exception as e:
-                logging.error(f"Unexpected error: {e}") 
     
     def do_POST(self):
 

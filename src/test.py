@@ -13,7 +13,7 @@ import predict
 
 testImgPath = "train_test_data/test/images"
 
-def create_boxplot(accuracyList, modelNum, foldNum):
+def create_boxplot(accuracyList, modelNum):
 
 	fig, ax = plt.subplots(figsize=(14, 6))
 
@@ -31,14 +31,14 @@ def create_boxplot(accuracyList, modelNum, foldNum):
 	
 	# Customize plot
 	ax.set_ylabel('Accuracy (%)', fontsize=12, fontweight='bold')
-	ax.set_title(f'Accuracy Distribution \n(Model: {modelNum} birds, Fold: {foldNum})', fontsize=14, fontweight='bold')
+	ax.set_title(f'Accuracy Distribution \n(Model: {modelNum} birds)', fontsize=14, fontweight='bold')
 	ax.set_ylim(min(accuracyList)-10, min(max(accuracyList) + 10, 105))
 	ax.grid(True, alpha=0.3, axis='y')
 	
 	plt.tight_layout()
 	
 	# Save plot
-	output_path = f"results/boxplot_accuracy_{modelNum}_birds_fold{foldNum}.png"
+	output_path = f"results/boxplot_accuracy_{modelNum}_birds.png"
 	os.makedirs("results", exist_ok=True)
 	plt.savefig(output_path, dpi=100, bbox_inches='tight')
 	print(f"Box-and-whisker plot saved to {output_path}")
@@ -101,7 +101,7 @@ def test(modelNum):
 	print(f"Best Bird: {bestBirdName} with an accuracy of {bestBirdAccuracy}%")
 	print(f"Worst Bird: {worstBirdName} with an accuracy of {worstBirdAccuracy}%")
 	
-	create_boxplot(accuracyList, modelNum, foldNum)
+	create_boxplot(accuracyList, modelNum)
 
 if __name__ == "__main__":
 

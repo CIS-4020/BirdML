@@ -52,6 +52,8 @@ with open("raw_data/classes.txt", "r") as rawClassFile:
 			newClassFile.flush()
 
 			firstImage = True
+
+			# Loop through each image in each folder
 			for imgFile in os.listdir(f"{rawImgPath}/{folderName}"):
 
 				imageName = imgFile.split(".")[0]
@@ -61,10 +63,11 @@ with open("raw_data/classes.txt", "r") as rawClassFile:
 				if img is None:
 					continue
 
+				# Write the first image per bird class into the single_data directory. These single images are used to display the predicted bird in our frontend.
 				if firstImage:
 					cv2.imwrite(f"{singleImgPath}/{nextClass}.jpg", img)
 
-				#crop using bounding boxes
+				# Crop image using bounding boxes
 				if imgFile in bbox_dict:
 					x, y, w, h = bbox_dict[imgFile]
 					# Make sure bbox doesn't go outside image
@@ -74,6 +77,7 @@ with open("raw_data/classes.txt", "r") as rawClassFile:
 					y2 = min(img.shape[0], y + h)
 					full_img = img[y1:y2, x1:x2]
 
+				# Resize image to have dimensions 224x224 and add black padding to ensure the image is square
 				squared_img =  findBird.resizeAndPaddBlack(full_img)
 
 				cv2.imwrite(f"{newImgPath}/{nextClass}/{imgFile}", squared_img)

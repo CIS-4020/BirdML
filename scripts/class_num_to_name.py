@@ -1,5 +1,5 @@
 import os
-# used to convert a class number from our training model to the actual name of the bird
+# Used to convert a class number from our training model to the actual name of the bird
 def convertClassNumToClassName(classNum):
 
 	PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))

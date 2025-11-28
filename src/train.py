@@ -6,32 +6,31 @@ from torchvision.models import ResNet50_Weights
 from torch import nn, optim
 import torch
 from sklearn.model_selection import KFold
-from test import test
 from graph import graphFoldData
 
+# K-Fold Cross-Validation Train Function
 def kFoldEval(numFolders=-1, num_epochs=20):
-	# Standard transform pipeline for ResNet input
-	train_transforms = transforms.Compose([
 
-		#Data augmentation
+	# Random image tranformations to increase sample variety
+	train_transforms = transforms.Compose([
 		transforms.RandomHorizontalFlip(p=0.5),
     	transforms.RandomRotation(degrees=20),
 		transforms.RandomResizedCrop(224, scale=(0.8,1.0)),
 		transforms.RandomGrayscale(p=0.1),
-		transforms.ColorJitter(                     # Random brightness/contrast/saturation
+		transforms.ColorJitter(
 			brightness=0.2,
 			contrast=0.2,
 			saturation=0.2,
 			hue=0.1
 		),
-
-		transforms.ToTensor(),					   # Convert PIL -> Tensor
-		transforms.Normalize(						# Normalize same as ImageNet
+		transforms.ToTensor(),
+		transforms.Normalize(
 			mean=[0.485, 0.456, 0.406],
 			std=[0.229, 0.224, 0.225]
 		)
 	])
 
+	# Three hyperparameter configurations for our k-fold cross-validation to try
 	hyperparameter_configs = [
 		{"lr": 1e-3, "weight_decay": 1e-4},
 		{"lr": 5e-4, "weight_decay": 5e-5},
@@ -44,8 +43,7 @@ def kFoldEval(numFolders=-1, num_epochs=20):
 
 	numFolders = min(numFolders, len(train_data.classes))
 	if numFolders > -1:
-		# Selecting a subset of the total bird classes
-
+		# Selecting a subset of the total bird classes. We allow this so that we can test training smaller models that don't take nearly as long to train.
 		all_classes = sorted(train_data.classes, key=lambda x: int(x))
 		keep_classes = all_classes[:numFolders]
 
@@ -68,7 +66,6 @@ def kFoldEval(numFolders=-1, num_epochs=20):
 				image, label = self.dataset[self.indices[idx]]
 				return image, self.label_map[label]
 
-		#train_subset = Subset(train_data, subset_indices)
 		train_subset = SubsetWithRemap(train_data, subset_indices, label_map)
 		
 		print("Kept class names:", keep_classes)
@@ -93,14 +90,12 @@ def kFoldEval(numFolders=-1, num_epochs=20):
 
 			model = models.resnet50(weights=ResNet50_Weights.IMAGENET1K_V2)
 
-			# Replace final fully connected layer with correct output size
 			if numFolders > -1:
 				num_classes = numFolders
 			else:
 				num_classes = len(train_data.classes)
 			model.fc = nn.Linear(model.fc.in_features, num_classes)
 
-			# Freeze backbone
 			for name, param in model.named_parameters():
 				if not name.startswith("fc"):
 					param.requires_grad = False
@@ -109,7 +104,7 @@ def kFoldEval(numFolders=-1, num_epochs=20):
 
 			model = model.to(device)
 
-			# Define optimizer and loss function
+			# Define optimizer and loss functions
 			criterion = nn.CrossEntropyLoss()
 			optimizer = optim.Adam(model.fc.parameters(), lr=config["lr"], weight_decay=config["weight_decay"])
 
@@ -118,7 +113,9 @@ def kFoldEval(numFolders=-1, num_epochs=20):
 
 			early_stop_count = 0
 			early_stop_condition = 3
-			for epoch in range(num_epochs):  # increase epochs for better training
+
+			# Main epoch training loop
+			for epoch in range(num_epochs):
 				model.train()
 				train_loss_sum = 0
 				for images, labels in train_loader:
@@ -132,7 +129,7 @@ def kFoldEval(numFolders=-1, num_epochs=20):
 
 					train_loss_sum += loss.item()
 			
-				## Switches from training mode to testing mode
+				# Switch from training mode to testing mode to evaluate this particular fold's performance
 				model.eval()
 				correct = 0
 				total = 0
@@ -168,8 +165,6 @@ def kFoldEval(numFolders=-1, num_epochs=20):
 
 			print(f"Fold {fold+1} Eval Score: {best_avg_test_loss}")
 
-		
-			
 		config_score = sum(fold_scores) / len(fold_scores)
 		print(f"Avg score for config {config}: {config_score}")
 		graphFoldData(fold_data)
@@ -178,30 +173,25 @@ def kFoldEval(numFolders=-1, num_epochs=20):
 			best_config_score = config_score
 			best_config = config
 
-
-	# Evaluate best fold
 	print(f"Selected config {best_config} for evaluation. Score: {best_config_score}")
 	
 	return best_config
 
 def trainModel(numFolders=-1, num_epochs=20, params={"lr": 1e-3, "weight_decay": 1e-4}):
-	# Standard transform pipeline for ResNet input
+	# Random image tranformations to increase sample variety
 	train_transforms = transforms.Compose([
-
-		#Data augmentation
 		transforms.RandomHorizontalFlip(p=0.5),
     	transforms.RandomRotation(degrees=20),
 		transforms.RandomResizedCrop(224, scale=(0.8,1.0)),
 		transforms.RandomGrayscale(p=0.1),
-		transforms.ColorJitter(                     # Random brightness/contrast/saturation
+		transforms.ColorJitter(
 			brightness=0.2,
 			contrast=0.2,
 			saturation=0.2,
 			hue=0.1
 		),
-
-		transforms.ToTensor(),					   # Convert PIL -> Tensor
-		transforms.Normalize(						# Normalize same as ImageNet
+		transforms.ToTensor(),
+		transforms.Normalize(
 			mean=[0.485, 0.456, 0.406],
 			std=[0.229, 0.224, 0.225]
 		)
@@ -211,8 +201,7 @@ def trainModel(numFolders=-1, num_epochs=20, params={"lr": 1e-3, "weight_decay":
 
 	numFolders = min(numFolders, len(train_data.classes))
 	if numFolders > -1:
-		# Selecting a subset of the total bird classes
-
+		# Selecting a subset of the total bird classes. We allow this so that we can test training smaller models that don't take nearly as long to train.
 		all_classes = sorted(train_data.classes, key=lambda x: int(x))
 		keep_classes = all_classes[:numFolders]
 
@@ -235,7 +224,6 @@ def trainModel(numFolders=-1, num_epochs=20, params={"lr": 1e-3, "weight_decay":
 				image, label = self.dataset[self.indices[idx]]
 				return image, self.label_map[label]
 
-		#train_subset = Subset(train_data, subset_indices)
 		train_subset = SubsetWithRemap(train_data, subset_indices, label_map)
 		
 		print("Kept class names:", keep_classes)
@@ -252,14 +240,12 @@ def trainModel(numFolders=-1, num_epochs=20, params={"lr": 1e-3, "weight_decay":
 
 	model = models.resnet50(weights=ResNet50_Weights.IMAGENET1K_V2)
 
-	# Replace final fully connected layer with correct output size
 	if numFolders > -1:
 		num_classes = numFolders
 	else:
 		num_classes = len(train_data.classes)
 	model.fc = nn.Linear(model.fc.in_features, num_classes)
 
-	# Freeze backbone
 	for name, param in model.named_parameters():
 		if not name.startswith("fc"):
 			param.requires_grad = False
@@ -268,7 +254,7 @@ def trainModel(numFolders=-1, num_epochs=20, params={"lr": 1e-3, "weight_decay":
 
 	model = model.to(device)
 
-	# Define optimizer and loss function
+	# Define optimizer and loss functions
 	criterion = nn.CrossEntropyLoss()
 	optimizer = optim.Adam(model.fc.parameters(), lr=params["lr"], weight_decay=params["weight_decay"])
 
@@ -276,7 +262,9 @@ def trainModel(numFolders=-1, num_epochs=20, params={"lr": 1e-3, "weight_decay":
 
 	early_stop_count = 0
 	early_stop_condition = 3
-	for epoch in range(num_epochs):  # increase epochs for better training
+	
+	# Main epoch training loop
+	for epoch in range(num_epochs):
 		model.train()
 		loss_sum = 0
 		for images, labels in train_loader:
@@ -307,6 +295,7 @@ def trainModel(numFolders=-1, num_epochs=20, params={"lr": 1e-3, "weight_decay":
 	torch.save(model.state_dict(), f"./models/birdML_{numFolders}_birds.pth")
 
 if __name__ == "__main__":
+	# Arguments can be provided to choose whether or not to run k-fold cross-validation, choose the number of bird classes to train on, and choose the number of epochs for the train.
 	if len(sys.argv) > 3:
 		numClasses = int(sys.argv[2])
 		numEpochs = int(sys.argv[3])

@@ -16,7 +16,6 @@ def load_model(model_name):
     if not os.path.exists(model_path):
         raise FileNotFoundError(f"Model not found: {model_path}")
 
-    # print(f"Loading model from: {model_path}")
     return model_path
 
 def predict(modelName, image, imageName):
@@ -28,7 +27,7 @@ def predict(modelName, image, imageName):
 
     model_path = load_model(modelName)
     model.load_state_dict(torch.load(model_path, map_location=torch.device("cpu")))
-    model.eval()  # set to evaluation mode
+    model.eval()
 
     transform = transforms.Compose([
         transforms.Resize((224, 224)),
@@ -39,7 +38,7 @@ def predict(modelName, image, imageName):
         )
     ])
 
-    input_tensor = transform(image).unsqueeze(0)  # shape [1, 3, 224, 224]
+    input_tensor = transform(image).unsqueeze(0)
 
     with torch.no_grad():
         outputs = model(input_tensor)
@@ -50,9 +49,6 @@ def predict(modelName, image, imageName):
         confidence, predicted = probs.max(1)
         confidence_score = confidence.item()
 
-    # print(f"Prediction Results: {imageName} --> {classConvert.convertClassNumToClassName(predicted_class)}")
-    # print(f"Confidence Score: {confidence_score}")
-
     return predicted_class, confidence_score
 
 if __name__ == "__main__":
@@ -60,18 +56,18 @@ if __name__ == "__main__":
     testImages = []
 
     if(len(sys.argv) < 3):
-        print(f"Missing argument: {len(sys.argv)}/3 arguments provided.")
+        print(f"Missing argument: {len(sys.argv)-1}/2 arguments provided.")
         print("Example: python3 src/predict.py -a 10")
         sys.exit(1)
 
-    #first arg is the image/images, use -a for all
+    # First arg is the image/images, use -a for all
     if sys.argv[1] == "-a":
         for imgFile in os.listdir(f"./test_images/"):
             testImages.append(imgFile)
     else:
         testImages.append(sys.argv[1])
 
-    #second arg is for the model num
+    # Second arg is for the model num
     modelNum = sys.argv[2]
     model = f"birdML_{modelNum}_birds.pth"
 

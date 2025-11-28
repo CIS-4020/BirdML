@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import "../App.css";
-import { getPrediction } from "../server.ts"; // your helper function
+import { getPrediction } from "../server.ts";
 
 interface ImageUploadProps {
   onChange?: (file: File | null) => void;
@@ -45,9 +45,6 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ onChange, onPrediction, onCon
             const img = document.getElementById("myImage") as HTMLImageElement;
             img.src = `data:image/png;base64,${result.prediction_image}`;
             console.log("Prediction:", result);
-
-            // const resultBtn = document.getElementById("resultBtn") as HTMLButtonElement;
-            // resultBtn.innerHTML = "Result: " + predictionResult.split("(")[0] + "";
 
             onPrediction?.(result.prediction_string);
             onConfidence?.(result.confidence);
